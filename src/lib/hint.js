@@ -1,8 +1,9 @@
 import {Sprite} from "pixi.js";
 
 export class Hint {
-    constructor(app,handTexture) {
+    constructor(app,handTexture,scale =1) {
         this.handHintShown =true;
+        this.scale =scale;
         this.handTexture = handTexture;
         this.handTimeout=null;
         this._app = app;
@@ -16,6 +17,7 @@ export class Hint {
         hand.anchor.set(0.5);
 
         hand.position.set(start.x, start.y);
+        hand.scale.set(this.scale);
         hand.startPosition =start;
         hand.alpha = 1;
         container.addChild(hand);

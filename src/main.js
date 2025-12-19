@@ -15,6 +15,7 @@ const DEFAULT_HEIGHT = 900;
 const CAR_SPEED = 3;
 let CURRENT_SCALE_WIDTH = Math.min(window.innerWidth,DEFAULT_WIDTH)/DEFAULT_WIDTH;
 let CURRENT_SCALE_HEIGHT = Math.min(window.innerHeight,DEFAULT_HEIGHT)/DEFAULT_HEIGHT;
+let scale = Math.min(CURRENT_SCALE_HEIGHT,CURRENT_SCALE_WIDTH)
 const handTexture = await Assets.load(assetsBase64.hand);
 const failTexture = await Assets.load(assetsBase64.fail);
 const iconTexture = await Assets.load(assetsBase64.logo);
@@ -67,7 +68,7 @@ let inactivityTimer = null;
     const PZ = new ParkZone(parking_list);
     const AC = new ActiveCars()
     const DZ = new DrawZone()
-    const HC = new Hint(app,handTexture)
+    const HC = new Hint(app,handTexture,scale)
     const FS = new FinalScene(app,buttonTexture,iconTexture,'https://roasup.com/');
     const drawZone  = DZ.zone;
     const parkingSpace =PZ.parkingSpace
@@ -78,7 +79,7 @@ let inactivityTimer = null;
     setPositionOfCars();
 
     inactivityTimer = setTimeout(()=>{
-        FS.showFinalScene();
+        FS.showFinalScene(scale);
         HC.switchHand(false);
     },INACTIVITY_DELAY)
 
@@ -127,13 +128,13 @@ let inactivityTimer = null;
             step++;
             const t = step/totalSteps;
             failSprite.alpha = t;
-            failSprite.scale.set(0.5*t);
+            failSprite.scale.set(0.5*t*scale);
             if(step>=totalSteps){
                 app.ticker.remove(animateFail);
                 setTimeout(()=>{
                     container.removeChild(failSprite);
                     failSprite.destroy();
-                    FS.showFinalScene();
+                    FS.showFinalScene(scale);
                 },1000);
             }
         });
@@ -234,11 +235,17 @@ let inactivityTimer = null;
 
         CURRENT_SCALE_WIDTH = Math.min(window.innerWidth,DEFAULT_WIDTH)/DEFAULT_WIDTH;
         CURRENT_SCALE_HEIGHT = Math.min(window.innerHeight,DEFAULT_HEIGHT)/DEFAULT_HEIGHT;
-        const scale = Math.min(CURRENT_SCALE_HEIGHT,CURRENT_SCALE_WIDTH)
-        app.stage.scale.set(scale);
+        scale = Math.min(CURRENT_SCALE_HEIGHT,CURRENT_SCALE_WIDTH)
+        parkingSpace.scale.set(scale);
+        parkingSpace.position.set(window.innerWidth/2 - (parkingSpace.width-40)/2,0)
+        redCar.scale.set(scale);
+        yellowCar.scale.set(scale);
+        setPositionOfCars();
+        //drawZone.scale.set(1/scale);
         DZ.updateHitArea();
+
     }
-    window.addEventListener("resize", checkResize, false);
+   // window.addEventListener("resize", checkResize, false);
 })();
 
 

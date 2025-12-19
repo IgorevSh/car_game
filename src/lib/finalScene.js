@@ -7,7 +7,7 @@ constructor(app,buttonTexture,iconTexture,link) {
     this.iconTexture = iconTexture;
     this.link = link;
 }
-    showFinalScene() {
+    showFinalScene(scale) {
         const finalContainer = new Container();
         this._app.stage.addChild(finalContainer);
         finalContainer.interactive = true;
@@ -18,13 +18,14 @@ constructor(app,buttonTexture,iconTexture,link) {
 
         const icon = new Sprite(this.iconTexture);
         icon.anchor.set(0.5 ,0);
-        icon.scale.set(0.3);
+        icon.scale.set(0.3*scale);
         icon.position.set( this._app.screen.width / 2, 50); // 100 px от верхнего края
         finalContainer.addChild(icon);
         const button = new Sprite( this.buttonTexture);
         button.anchor.set(0.5);
         button.cursor = 'pointer';
         button.position.set( this._app.screen.width / 2,  this._app.screen.height - 100);
+        button.scale.set(scale);
         button.interactive = true;
         button.buttonMode = true;
 
