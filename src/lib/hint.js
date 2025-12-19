@@ -4,6 +4,7 @@ export class Hint {
     constructor(app,handTexture) {
         this.handHintShown =true;
         this.handTexture = handTexture;
+        this.handTimeout=null;
         this._app = app;
     }
     switchHand(val){
@@ -26,6 +27,7 @@ export class Hint {
                 this._app.ticker.remove(handControl);
                 container.removeChild(hand);
                 hand.destroy();
+                clearTimeout(this.handTimeout);
                 return;
             }
             function moveHand() {
@@ -49,12 +51,14 @@ export class Hint {
             }else{
                 if(!timerSet){
                     timerSet = true;
-                    setTimeout(()=>{
-                        hand.x = hand.startPosition.x;
-                        hand.y = hand.startPosition.y;
-                        hand.alpha = 1;
-                        step = 0;
-                        timerSet=false;
+                    this.handTimeout=setTimeout(()=>{
+                        if(hand) {
+                            hand.x = hand.startPosition.x;
+                            hand.y = hand.startPosition.y;
+                            hand.alpha = 1;
+                            step = 0;
+                            timerSet = false;
+                        }
                     },3000);
                 }
             }
