@@ -48,7 +48,7 @@ export class ParkZone{
         const zone = new Container();
         const bg = new Graphics();
         bg.rect(0, 0, width, height);
-        //bg.fill({ color: 0x000000, alpha: 0.3 });
+        bg.fill({ color: 0x000000, alpha: 0 });
         zone.addChild(bg);
         if(!!asset){
             const car = new Sprite(asset);
