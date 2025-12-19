@@ -27,7 +27,8 @@ export class DrawZone {
     }
     initZone(){
         this.drawing = new Graphics();
-        this.drawing.rect(0,0,window.innerWidth,window.innerHeight).fill({color:0xff0000,alpha: 0.1})
+        this.drawing.rect(0,0,window.innerWidth,window.innerHeight)
+            //.fill({color:0xff0000,alpha: 0.1})
         this.currentLine = new Graphics();
         this.zone.eventMode = 'dynamic';
         this.zone.hitArea = new Rectangle(0,0,window.innerWidth,window.innerHeight);
