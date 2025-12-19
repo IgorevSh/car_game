@@ -85,7 +85,8 @@ let inactivityTimer = null;
     let carsAreMoving = false;
     function startCarsMovement(intersection) {
         carsAreMoving = true;
-
+        redCar.zIndex=1;
+        yellowCar.zIndex=1;
         Object.values(DZ.savedPaths).forEach(pathData => {
             const carSprite =
                 pathData.color === cars_list.RED.color ? redCar : yellowCar;
@@ -116,6 +117,7 @@ let inactivityTimer = null;
         failSprite.anchor.set(0.5);
         failSprite.position.set(app.screen.width/2, app.screen.height/2);
         failSprite.alpha = 0;
+        failSprite.zIndex = 2;
         failSprite.interactive = false;
         failSprite.buttonMode = false;
         container.addChild(failSprite);
@@ -141,7 +143,6 @@ let inactivityTimer = null;
     const redParking = parkingSpace?.children[5];
     container.addChild(parkingSpace);
     parkingSpace.position.set(window.innerWidth/2 - (parkingSpace.width-40)/2,0);
-    container.addChild(DZ.linesContainer);
     container.addChild(redCar,yellowCar);
     container.addChild(drawZone);
     checkResize();

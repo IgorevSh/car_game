@@ -1,5 +1,11 @@
 import {Container, Graphics, Point, Rectangle} from "pixi.js";
 import {getLinesIntersection, isInsideCarWithPadding} from "./utils.js";
+
+
+
+const DEFAULT_WIDTH =1200;
+let CURRENT_SCALE_WIDTH = Math.min(window.innerWidth,DEFAULT_WIDTH)/DEFAULT_WIDTH;
+
 const BRUSH_RADIUS = 16;
 const BRUSH_STEP = BRUSH_RADIUS / 2;
 export class DrawZone {
@@ -10,7 +16,6 @@ export class DrawZone {
         };
         this.zone = new Graphics();
         this.drawing = null;
-        this.linesContainer = new Container();
         this.activeCar = null;
         this.activeColor =null;
         this.finishedInZone = false;
@@ -59,7 +64,7 @@ export class DrawZone {
         this.leftCarArea = false;
 
         this.currentLine = new Graphics();
-        this.zone.addChild(this.currentLine);
+            this.zone.addChild(this.currentLine);
 
         this.startPoint = new Point(this.activeCar.x, this.activeCar.y);
         });
@@ -93,7 +98,7 @@ export class DrawZone {
             const { interactive, car } = hitZone.parkingData;
 
             if (interactive && car.color === this.activeColor) {
-                this.linesContainer.addChild(this.currentLine);
+                this.zone.addChild(this.currentLine);
 
                 this.savedPaths[this.activeCar.carData.name] = {
                     points: [...this.points],
