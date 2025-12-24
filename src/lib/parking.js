@@ -14,7 +14,7 @@ export class ParkZone{
         for (let parkingPlaces = 0; parkingPlaces <= this.parkingList?.length; parkingPlaces++) {
             const parkingShift= (parkingPlaces * this.parkingGap)
             const bottomShift = (window.innerHeight*0.7 - carPosition) ;
-            const line= this.createParkLine(parkingShift,0,  this.parkLineShift,bottomShift);
+            const line= this.createParkLine(parkingShift,0,  this.parkLineShift,350);
             this.parkingWidth+=this.parkLineShift;
             this.parkingSpace.addChild(line);
 
@@ -26,7 +26,7 @@ export class ParkZone{
                     parkingShift+this.parkLineShift,
                     0,
                     this.parkingGap - this.parkLineShift,
-                    bottomShift-this.parkLineShift*2,
+                    350-this.parkLineShift*2,
                     slot.car.color,
                     asset
                 );
@@ -84,5 +84,8 @@ export class ParkZone{
                 point.y <= b.y + b.height
             );
         });
+    }
+    setPosition(){
+        this.parkingSpace.position.set(window.innerWidth/2 - (this.parkingSpace.width)/2,0);
     }
 }

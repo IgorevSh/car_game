@@ -141,16 +141,11 @@ let inactivityTimer = null;
     }
     PZ.drawParking(redCar.height);
 
-    const redParking = parkingSpace?.children[5];
     container.addChild(parkingSpace);
-    parkingSpace.position.set(window.innerWidth/2 - (parkingSpace.width-40)/2,0);
+   // parkingSpace.position.set(window.innerWidth/2 - (parkingSpace.width-40)/2,0);
     container.addChild(redCar,yellowCar);
     container.addChild(drawZone);
-    checkResize();
-    if (redParking) {
-        const endPos = redParking.toGlobal(new Point(redParking.width , redParking.height ));
-        HC.showHandHint(redCar.toGlobal(new Point(redCar.width/2 , redCar.height/2 )), endPos,container,app);
-    }
+    checkResize(true);
     app.ticker.add(() => {
       if (!carsAreMoving) return;
         const redPath = DZ.savedPaths.RED;
@@ -164,10 +159,10 @@ let inactivityTimer = null;
             const ab = a.getBounds();
             const bb = b.getBounds();
             return !(
-                ab.x + ab.width-20 < bb.x ||
-                ab.x > bb.x + bb.width-20 ||
-                ab.y + ab.height-20 < bb.y ||
-                ab.y > bb.y + bb.height-20
+                ab.x + ab.width < bb.x ||
+                ab.x > bb.x + bb.width ||
+                ab.y + ab.height < bb.y ||
+                ab.y > bb.y + bb.height
             );
         }
 
@@ -231,21 +226,30 @@ let inactivityTimer = null;
         redCar.position.set(window.innerWidth/2 -redCar.width - 40, window.innerHeight-redCar.height/2);
         yellowCar.position.set(window.innerWidth/2 + yellowCar.width + 40, window.innerHeight-yellowCar.height/2);
     }
-    function checkResize(){
+    function checkResize(init= false) {
+        setTimeout(()=>{
+        if (init===true) {
 
-        CURRENT_SCALE_WIDTH = Math.min(window.innerWidth,DEFAULT_WIDTH)/DEFAULT_WIDTH;
-        CURRENT_SCALE_HEIGHT = Math.min(window.innerHeight,DEFAULT_HEIGHT)/DEFAULT_HEIGHT;
-        scale = Math.min(CURRENT_SCALE_HEIGHT,CURRENT_SCALE_WIDTH)
+        CURRENT_SCALE_WIDTH = Math.min(window.innerWidth, DEFAULT_WIDTH) / DEFAULT_WIDTH;
+        CURRENT_SCALE_HEIGHT = Math.min(window.innerHeight, DEFAULT_HEIGHT) / DEFAULT_HEIGHT;
+        scale = Math.min(CURRENT_SCALE_WIDTH * CURRENT_SCALE_HEIGHT);
         parkingSpace.scale.set(scale);
-        parkingSpace.position.set(window.innerWidth/2 - (parkingSpace.width-40)/2,0)
-        redCar.scale.set(scale);
-        yellowCar.scale.set(scale);
+        redCar.scale.set(scale*0.8);
+        yellowCar.scale.set(scale*0.8);
+        }
+        PZ.setPosition();
         setPositionOfCars();
-        //drawZone.scale.set(1/scale);
         DZ.updateHitArea();
-
+        if(init===true) {
+            const redParking = parkingSpace?.children[5];
+            if (redParking) {
+                const endPos = redParking.toGlobal(new Point(redParking.width , redParking.height ));
+                HC.showHandHint(redCar.toGlobal(new Point(redCar.width/2 , redCar.height/2 )), endPos,container,app);
+            }
+        }
+        },0)
     }
-   // window.addEventListener("resize", checkResize, false);
+    window.addEventListener('orientationchange', checkResize)
 })();
 
 
