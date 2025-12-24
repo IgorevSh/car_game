@@ -249,7 +249,7 @@ let inactivityTimer = null;
         }
         },0)
     }
-    window.addEventListener('orientationchange', checkResize)
+    //window.addEventListener('orientationchange', checkResize)
 })();
 
 
