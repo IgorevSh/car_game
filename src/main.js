@@ -13,6 +13,8 @@ const INACTIVITY_DELAY = 20000;
 const DEFAULT_WIDTH =1200;
 const DEFAULT_HEIGHT = 900;
 const CAR_SPEED = 3;
+const ROTATION_SPEED = 0.15; // Скорость поворота (0-1, где 1 = мгновенный поворот)
+const MAX_ROTATION_PER_FRAME = 0.1; // Максимальный угол поворота за кадр в радианах
 let CURRENT_SCALE_WIDTH = Math.min(window.innerWidth,DEFAULT_WIDTH)/DEFAULT_WIDTH;
 let CURRENT_SCALE_HEIGHT = Math.min(window.innerHeight,DEFAULT_HEIGHT)/DEFAULT_HEIGHT;
 let scale = Math.min(CURRENT_SCALE_HEIGHT,CURRENT_SCALE_WIDTH)
@@ -84,6 +86,34 @@ let inactivityTimer = null;
     },INACTIVITY_DELAY)
 
     let carsAreMoving = false;
+    
+    // Функция для нормализации угла в диапазон [-π, π]
+    function normalizeAngle(angle) {
+        while (angle > Math.PI) angle -= 2 * Math.PI;
+        while (angle < -Math.PI) angle += 2 * Math.PI;
+        return angle;
+    }
+    
+    // Функция для плавного поворота к целевому углу
+    function smoothRotate(currentRotation, targetRotation) {
+        // Нормализуем углы
+        currentRotation = normalizeAngle(currentRotation);
+        targetRotation = normalizeAngle(targetRotation);
+        
+        // Вычисляем разницу углов
+        let angleDiff = normalizeAngle(targetRotation - currentRotation);
+        
+        // Ограничиваем максимальный угол поворота за кадр
+        const maxRotation = MAX_ROTATION_PER_FRAME;
+        if (Math.abs(angleDiff) > maxRotation) {
+            angleDiff = angleDiff > 0 ? maxRotation : -maxRotation;
+        }
+        
+        // Плавная интерполяция
+        const newRotation = currentRotation + angleDiff * ROTATION_SPEED;
+        return normalizeAngle(newRotation);
+    }
+    
     function startCarsMovement(intersection) {
         carsAreMoving = true;
         redCar.zIndex=1;
@@ -187,6 +217,13 @@ let inactivityTimer = null;
             const dy = target.y - redCarSprite.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
+            // Вычисляем целевой угол поворота в направлении движения
+            if (dist > 0.1) {
+                const targetAngle = Math.atan2(dy, dx) - Math.PI / 2 + Math.PI;
+                // Плавно поворачиваем к целевому углу
+                redCarSprite.rotation = smoothRotate(redCarSprite.rotation, targetAngle);
+            }
+
             if (dist <= redSpeed) {
                 redCarSprite.position.set(target.x, target.y);
                 redPath.currentIndex++;
@@ -203,6 +240,13 @@ let inactivityTimer = null;
             const dy = target.y - yellowCarSprite.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
+            // Вычисляем целевой угол поворота в направлении движения
+            if (dist > 0.1) {
+                const targetAngle = Math.atan2(dy, dx) - Math.PI / 2 + Math.PI;
+                // Плавно поворачиваем к целевому углу
+                yellowCarSprite.rotation = smoothRotate(yellowCarSprite.rotation, targetAngle);
+            }
+
             if (dist <= yellowSpeed) {
                 yellowCarSprite.position.set(target.x, target.y);
                 yellowPath.currentIndex++;
@@ -210,7 +254,6 @@ let inactivityTimer = null;
                 yellowCarSprite.x += (dx / dist) * yellowSpeed;
                 yellowCarSprite.y += (dy / dist) * yellowSpeed;
             }
-
         }
 
         if (
